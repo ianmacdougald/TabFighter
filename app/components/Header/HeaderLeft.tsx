@@ -5,6 +5,7 @@ import { RemoveContext } from '../../context/RemoveContext';
 import { SoundContext } from '../../context/SoundContext';
 import { Tab } from '../../../types';
 import getTabs from '../../utils/getTabs';
+import { SelectContext } from '../../context/SelectContext';
 
 const HeaderLeft = () => {
   const [fatality, setFatality] = useState(false);
@@ -12,6 +13,10 @@ const HeaderLeft = () => {
   const allTabs = useContext(TabContext)?.allTabs;
   const setAllTabs = useContext(TabContext)?.setAllTabs;
   const soundOn = useContext(SoundContext)?.soundOn;
+
+  const [allSelected, setAllSelected] = useState<boolean>(false);
+  const addToSelectedTabs = useContext(SelectContext)?.addToSelectedTabs;
+  const removeFromSelectedTabs = useContext(SelectContext)?.removeFromSelectedTabs;
   
   const randomClick = async () => {
     if (allTabs) {
@@ -40,6 +45,24 @@ const HeaderLeft = () => {
       }
     };
   };
+
+  const selectAll = () => { 
+    if (allTabs && !allSelected) {
+        if (addToSelectedTabs) { 
+          const tabs = Object.values(allTabs)[0]
+              .filter(tab => tab.tabId)
+              .map(tab => Number(tab.tabId));
+
+          addToSelectedTabs(...tabs);
+          setAllSelected(true);
+        }
+      }
+    else if (allSelected) { 
+      setAllSelected(false);
+      // With no input, removes all from selected tabs by default
+      if (removeFromSelectedTabs) removeFromSelectedTabs();
+    }
+  }
 
   return (
     <div className='flex items-center'>
