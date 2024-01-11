@@ -26,8 +26,8 @@ const WindowContainer = ({id, tabs, windowName}: WindowProps) => {
       if (soundOn) { 
         setYahoo(true);
         setTimeout(() => setYahoo(false), 1100);
-        if (addToSelectedTabs) addToSelectedTabs(...tabIds);
       }
+      if (addToSelectedTabs) addToSelectedTabs(...tabIds);
     } else { 
       if (removeFromSelectedTabs) removeFromSelectedTabs(...tabIds);
     }
