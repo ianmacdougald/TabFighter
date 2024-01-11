@@ -1,22 +1,37 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useContext } from 'react';
+import { TabContext } from '../../../context/TabContext';
+import { SelectContext } from '../../../context/SelectContext';
 
 interface SelectAllProps { 
-    action: () => void;
+   
 }
 
-const SelectAll: React.FC<SelectAllProps> = ({ action }) => { 
+export const SelectAllMode: React.FC<SelectAllProps> = ({  }) => { 
+    const allTabs = useContext(TabContext)?.allTabs; 
+    const addToSelectedTabs = useContext(SelectContext)?.addToSelectedTabs;
+    const removeFromSelectedTabs = useContext(SelectContext)?.removeFromSelectedTabs;
     const [ checked, setChecked ] = useState<boolean>(false);
-    const onClick = useCallback((e: any) => { 
-        // Check the box and select everything
-        setChecked(prev => !prev); 
-        action();
-    }, [ action ]);
+    const selectAll = () => { 
+        if (allTabs && !checked) {
+            if (addToSelectedTabs) { 
+              const tabs = Object.values(allTabs)[0]
+                  .filter(tab => tab.tabId)
+                  .map(tab => Number(tab.tabId));
+    
+              addToSelectedTabs(...tabs);
+              setChecked(true);
+            }
+          }
+        else if (checked) { 
+          // With no input, removes all from selected tabs by default
+          if (removeFromSelectedTabs) removeFromSelectedTabs();
+          setChecked(false);
+        }
+      }
 
     return ( 
         <div id="select-all-mode" className="mode select-btn flex items-center justify-center h-10 m-auto">
-            <input type='checkbox' checked={checked} className={`checkbox checkbox-primary 'checkbox-md mx-1'`} onClick={onClick} />
+            <input type='checkbox' checked={checked} className={`checkbox checkbox-primary 'checkbox-md mx-1'`} onClick={selectAll} />
         </div>
     )
 }
-
-export default SelectAll;
